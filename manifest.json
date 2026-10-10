@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Snapcase",
+  "short_name": "Snapcase",
+  "version": "1.0.0",
+  "description": "One-click bug reports: screenshot, steps, network calls, error messages and a short replay, packed into one file.",
+  "minimum_chrome_version": "116",
+  "permissions": ["tabs", "downloads", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Report a problem",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["lib/rrweb-record.min.js", "content/collector.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Demo Shop</title>
+    <style>
+      body { font: 16px/1.5 system-ui, sans-serif; margin: 0; color: #1f2937; background: #f8fafc; }
+      header { position: sticky; top: 0; background: #0f172a; color: #fff; padding: 14px 24px; font-weight: 700; }
+      main { max-width: 760px; margin: 0 auto; padding: 24px; }
+      section { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 18px; }
+      button { font: inherit; padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; margin-right: 8px; }
+      button.primary { background: #16a34a; color: #fff; border-color: #16a34a; }
+      label { display: block; margin: 8px 0; }
+      input, select { font: inherit; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+      #out { white-space: pre-wrap; font-family: monospace; font-size: 13px; color: #475569; }
+      .filler { height: 700px; background: linear-gradient(#e0f2fe, #fef9c3); display: grid; place-items: center; color: #64748b; }
+    </style>
+  </head>
+  <body>
+    <header>Demo Shop</header>
+    <main>
+      <section>
+        <h2>Products</h2>
+        <button id="load">Load products</button>
+        <button id="profile">Load my profile (XHR)</button>
+        <div id="out"></div>
+      </section>
+
+      <section>
+        <h2>Sign in</h2>
+        <form id="login" aria-label="Sign in">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" />
+          <label for="password">Password</label>
+          <input id="password" type="password" />
+          <label><input type="checkbox" id="remember" /> Remember me</label>
+          <button type="submit">Sign in</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Checkout</h2>
+        <label for="shipping">Shipping</label>
+        <select id="shipping">
+          <option>Standard</option>
+          <option>Express</option>
+        </select>
+        <label for="card">Card number</label>
+        <input id="card" type="text" placeholder="4111 1111 1111 1111" />
+        <p><button class="primary" id="pay">Pay now</button></p>
+        <p id="payResult"></p>
+      </section>
+
+      <div class="filler">Scroll down (long page for full-page screenshots)</div>
+      <section><h2>Footer content</h2><p>The bottom of the page.</p></section>
+    </main>
+
+    <script>
+      const out = document.getElementById('out');
+      document.getElementById('load').onclick = async () => {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        out.textContent = data.products.map((p) => `${p.name}: $${p.price}`).join('\n');
+      };
+      document.getElementById('profile').onclick = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/user?session=abc123');
+        xhr.setRequestHeader('Authorization', 'Bearer secret-token-value-123');
+        xhr.onload = () => (out.textContent = 'Hello ' + JSON.parse(xhr.responseText).name);
+        xhr.send();
+      };
+      document.getElementById('login').onsubmit = async (e) => {
+        e.preventDefault();
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value }),
+        });
+        if (!res.ok) console.warn('Login failed with status', res.status);
+      };
+      document.getElementById('pay').onclick = async () => {
+        const res = await fetch('/api/pay', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ card: document.getElementById('card').value, amount: 18 }) });
+        const data = await res.json();
+        console.error('Payment failed:', data.error);
+        document.getElementById('payResult').textContent = 'Something went wrong.';
+        setTimeout(() => {
+          const order = null;
+          order.confirm();
+        }, 50);
+      };
+    </script>
+  </body>
+</html>

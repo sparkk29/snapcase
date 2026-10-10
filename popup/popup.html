@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Snapcase</title>
+    <link rel="stylesheet" href="../shared/ui.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="mode-simple">
+    <header class="top">
+      <div class="brand">
+        <img src="../assets/logo.svg" alt="" width="26" height="26" />
+        <span>Snapcase</span>
+      </div>
+      <div data-mode-toggle></div>
+    </header>
+
+    <main>
+      <section id="unavailable" class="notice warn" hidden>
+        <div>
+          <strong>This page can't be reported.</strong>
+          <div>Chrome doesn't allow extensions on built-in pages like this one. Open the website you want to report and try again.</div>
+        </div>
+      </section>
+
+      <section id="ready" hidden>
+        <p class="status" id="status">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">Ready. This page is being recorded.</span>
+        </p>
+
+        <p id="reloadHint" class="notice warn small" hidden>
+          This page isn't being recorded yet. Reload the page, then repeat what you did, so the report includes everything.
+        </p>
+
+        <div class="stats" data-advanced>
+          <div class="stat"><span class="num" id="cRequests">0</span><span class="lbl">Requests</span></div>
+          <div class="stat"><span class="num" id="cFailed">0</span><span class="lbl">Failed</span></div>
+          <div class="stat"><span class="num" id="cErrors">0</span><span class="lbl">Errors</span></div>
+          <div class="stat"><span class="num" id="cActions">0</span><span class="lbl">Actions</span></div>
+        </div>
+
+        <fieldset class="shot-mode" data-advanced>
+          <legend>Screenshot</legend>
+          <label><input type="radio" name="shot" value="visible" checked /> Visible area</label>
+          <label><input type="radio" name="shot" value="fullpage" /> Full page</label>
+        </fieldset>
+
+        <button id="reportBtn" class="btn primary big block" type="button">Report a problem</button>
+        <p class="hint" data-simple>A screenshot and page details are included automatically. You'll be able to review everything before saving.</p>
+
+        <div id="progress" class="progress" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="progressText">Taking a screenshot…</span>
+        </div>
+        <p id="error" class="notice error" hidden></p>
+
+        <div class="actions" data-advanced>
+          <button id="pauseBtn" class="btn" type="button">Pause on this site</button>
+          <button id="clearBtn" class="btn danger" type="button">Clear data</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bottom">
+      <a href="#" id="optionsLink">Settings</a>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

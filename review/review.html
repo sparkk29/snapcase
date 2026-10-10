@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Report a problem · Snapcase</title>
+    <link rel="icon" href="../icons/icon-32.png" />
+    <link rel="stylesheet" href="../shared/ui.css" />
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body class="mode-simple">
+    <header class="top">
+      <div class="brand">
+        <img src="../assets/logo.svg" alt="" width="34" height="34" />
+        <div>
+          <div class="brand-name">Report a problem</div>
+          <div class="page-url" id="pageUrl"></div>
+        </div>
+      </div>
+      <div data-mode-toggle></div>
+    </header>
+
+    <div id="loading" class="center-msg">Loading your report…</div>
+    <div id="missing" class="center-msg" hidden>
+      <div class="notice warn">
+        <div>
+          <strong>This report is no longer available.</strong>
+          <div>Close this tab, go back to the page, and click <b>Report a problem</b> again.</div>
+        </div>
+      </div>
+    </div>
+
+    <main id="app" hidden>
+      <nav class="stepper" data-simple aria-label="Progress">
+        <ol>
+          <li data-goto="0"><span class="n">1</span> Mark the problem</li>
+          <li data-goto="1"><span class="n">2</span> Describe it</li>
+          <li data-goto="2"><span class="n">3</span> Save</li>
+        </ol>
+      </nav>
+
+      <div id="warnings" class="warnings"></div>
+
+      <div class="layout">
+        <section class="step card" id="step-mark" data-step="0">
+          <div class="step-head">
+            <h2>Mark the problem</h2>
+            <p class="muted" data-simple>Draw a box or an arrow to show where the problem is. Use <b>Hide private info</b> to cover anything personal. This step is optional.</p>
+            <p class="muted" data-advanced id="shotInfo"></p>
+          </div>
+
+          <div class="toolbar" role="toolbar" aria-label="Drawing tools">
+            <button type="button" class="tool" data-tool="rect" aria-pressed="true" title="Draw a box around the problem">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2" /></svg>
+              <span>Highlight</span>
+            </button>
+            <button type="button" class="tool" data-tool="arrow" aria-pressed="false" title="Draw an arrow pointing at the problem">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 L18 6 M10 6 H18 V14" /></svg>
+              <span>Arrow</span>
+            </button>
+            <button type="button" class="tool" data-tool="blur" aria-pressed="false" title="Cover private information such as names, emails or account numbers">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z" /><path d="M4 4 L20 20" /></svg>
+              <span>Hide private info</span>
+            </button>
+            <button type="button" class="tool" data-tool="pen" aria-pressed="false" title="Draw freehand" data-advanced>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L8 19 L19 8 L16 5 L5 16 Z" /></svg>
+              <span>Pen</span>
+            </button>
+            <button type="button" class="tool" data-tool="text" aria-pressed="false" title="Add a text label" data-advanced>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6 H19 M12 6 V19" /></svg>
+              <span>Text</span>
+            </button>
+            <span class="colors" data-advanced role="radiogroup" aria-label="Color">
+              <button type="button" class="swatch" data-color="#e11d48" style="--c: #e11d48" aria-label="Red" aria-checked="true" role="radio"></button>
+              <button type="button" class="swatch" data-color="#f59e0b" style="--c: #f59e0b" aria-label="Yellow" aria-checked="false" role="radio"></button>
+              <button type="button" class="swatch" data-color="#16a34a" style="--c: #16a34a" aria-label="Green" aria-checked="false" role="radio"></button>
+              <button type="button" class="swatch" data-color="#2563eb" style="--c: #2563eb" aria-label="Blue" aria-checked="false" role="radio"></button>
+              <button type="button" class="swatch" data-color="#111827" style="--c: #111827" aria-label="Black" aria-checked="false" role="radio"></button>
+            </span>
+            <span class="spacer"></span>
+            <button type="button" class="tool" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 L4 12 L9 17 M4 12 H15 A5 5 0 0 1 15 22" /></svg>
+              <span>Undo</span>
+            </button>
+            <button type="button" class="tool" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled data-advanced>
+              <span>Redo</span>
+            </button>
+            <button type="button" class="tool" id="clearShapesBtn" title="Remove all markings" disabled data-advanced>
+              <span>Clear</span>
+            </button>
+          </div>
+
+          <div class="shot-scroll">
+            <div class="stage" id="stage"></div>
+          </div>
+
+          <div class="step-nav" data-simple>
+            <span></span>
+            <button type="button" class="btn primary big" data-next>Next: Describe it</button>
+          </div>
+        </section>
+
+        <section class="step card" id="step-describe" data-step="1">
+          <div class="step-head">
+            <h2 data-simple>Describe it</h2>
+            <h2 data-advanced>Details</h2>
+            <p class="muted" data-simple>A few words are enough. You don't need to be technical.</p>
+          </div>
+
+          <label class="field" data-advanced>
+            Title
+            <input id="title" type="text" placeholder="Short summary, e.g. Checkout button does nothing" />
+          </label>
+          <label class="field">
+            What were you trying to do?
+            <textarea id="whatDoing" rows="2" placeholder="e.g. I was trying to pay for my order"></textarea>
+          </label>
+          <label class="field">
+            What went wrong?
+            <textarea id="whatWrong" rows="3" placeholder="e.g. I clicked Pay and nothing happened"></textarea>
+          </label>
+          <label class="field">
+            Steps we recorded
+            <span class="hint">We wrote these down automatically. Change or delete anything that's wrong, one step per line.</span>
+            <textarea id="steps" rows="6"></textarea>
+          </label>
+          <label class="field" data-advanced>
+            Technical notes
+            <textarea id="notes" rows="3" placeholder="Expected vs actual result, suspected cause, related tickets…"></textarea>
+          </label>
+
+          <div id="problemsNotice" class="notice" data-simple hidden></div>
+
+          <div class="step-nav" data-simple>
+            <button type="button" class="btn" data-prev>Back</button>
+            <button type="button" class="btn primary big" data-next>Next: Save</button>
+          </div>
+        </section>
+
+        <section class="step card" id="step-save" data-step="2">
+          <div class="step-head">
+            <h2 data-simple>Save the report</h2>
+            <h2 data-advanced>Export</h2>
+            <p class="muted" data-simple>Download the report and send the file to your support or development team. You can also copy a short summary to paste into an email or chat.</p>
+          </div>
+          <ul class="included" id="included"></ul>
+          <div class="save-actions">
+            <button type="button" id="downloadBtn" class="btn primary big">Download report</button>
+            <button type="button" id="copyBtn" class="btn big">Copy summary</button>
+          </div>
+          <div id="saveResult" class="notice success" hidden></div>
+          <div id="saveError" class="notice error" hidden></div>
+          <div class="step-nav" data-simple>
+            <button type="button" class="btn" data-prev>Back</button>
+            <span></span>
+          </div>
+        </section>
+
+        <section class="card tech" id="techPanel" data-advanced>
+          <div class="tech-head">
+            <h2>Captured activity</h2>
+            <div class="counts" id="techCounts"></div>
+          </div>
+          <div class="filters" role="tablist" aria-label="Filter activity" id="timelineFilters">
+            <button type="button" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-filter="problems" aria-pressed="false">Problems</button>
+            <button type="button" data-filter="network" aria-pressed="false">Network</button>
+            <button type="button" data-filter="console" aria-pressed="false">Console</button>
+            <button type="button" data-filter="action" aria-pressed="false">Actions</button>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="../lib/jszip.min.js"></script>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

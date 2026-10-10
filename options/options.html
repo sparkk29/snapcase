@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Snapcase settings</title>
+    <link rel="icon" href="../icons/icon-32.png" />
+    <link rel="stylesheet" href="../shared/ui.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body class="mode-simple">
+    <header class="top">
+      <div class="brand">
+        <img src="../assets/logo.svg" alt="" width="30" height="30" />
+        <span>Snapcase settings</span>
+      </div>
+      <div class="right">
+        <span id="savedIndicator" class="saved" aria-live="polite"></span>
+        <div data-mode-toggle></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Basics</h2>
+
+        <fieldset class="group">
+          <legend>Screenshot</legend>
+          <label class="radio"><input type="radio" name="screenshotMode" value="visible" /> Only what's visible on screen <span class="muted">(fastest)</span></label>
+          <label class="radio"><input type="radio" name="screenshotMode" value="fullpage" /> The whole page, top to bottom <span class="muted">(takes a few seconds)</span></label>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Session replay</legend>
+          <label class="check"><input type="checkbox" id="replayEnabled" /> Include a short replay of what happened on the page</label>
+          <p class="muted small">Typed text is always hidden in the replay.</p>
+          <label class="inline" data-advanced>
+            Keep at least the last
+            <select id="replaySeconds">
+              <option value="30">30 seconds</option>
+              <option value="60">60 seconds</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Toolbar icon</legend>
+          <label class="check"><input type="checkbox" id="badgeInSimpleMode" /> Show the number of problems on the icon in Simple mode</label>
+          <p class="muted small" data-advanced>The count is always shown in Advanced mode.</p>
+        </fieldset>
+
+        <p class="muted small" data-simple>More settings (which sites to record, size limits, privacy rules) are available in <b>Advanced</b> mode.</p>
+      </section>
+
+      <section class="card" data-advanced>
+        <h2>What to record</h2>
+        <div class="cols">
+          <label class="field">
+            Only record these sites
+            <span class="hint">One per line, for example <code>example.com</code> or <code>*.myapp.io</code>. Leave empty to record every site.</span>
+            <textarea id="includeDomains" rows="4" spellcheck="false"></textarea>
+          </label>
+          <label class="field">
+            Never record these sites
+            <span class="hint">One per line. Takes priority over the list on the left.</span>
+            <textarea id="excludeDomains" rows="4" spellcheck="false"></textarea>
+          </label>
+          <label class="field">
+            Paused sites
+            <span class="hint">Sites paused from the toolbar popup. Remove a line to resume.</span>
+            <textarea id="pausedDomains" rows="4" spellcheck="false"></textarea>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" id="ignoreStatic" /> Ignore requests for static files (scripts, styles, images, fonts)</label>
+
+        <fieldset class="group">
+          <legend>Console levels</legend>
+          <div class="row">
+            <label class="check"><input type="checkbox" name="consoleLevels" value="error" /> Errors</label>
+            <label class="check"><input type="checkbox" name="consoleLevels" value="warn" /> Warnings</label>
+            <label class="check"><input type="checkbox" name="consoleLevels" value="info" /> Info</label>
+            <label class="check"><input type="checkbox" name="consoleLevels" value="log" /> Log</label>
+            <label class="check"><input type="checkbox" name="consoleLevels" value="debug" /> Debug</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="card" data-advanced>
+        <h2>Limits</h2>
+        <div class="cols four">
+          <label class="field">Max body size (KB)<input type="number" id="maxBodyKB" min="1" max="5000" /></label>
+          <label class="field">Requests kept per tab<input type="number" id="maxRequests" min="10" max="5000" /></label>
+          <label class="field">Console messages kept<input type="number" id="maxConsole" min="10" max="5000" /></label>
+          <label class="field">User actions kept<input type="number" id="maxActions" min="10" max="5000" /></label>
+          <label class="field">Max full-page height (px)<input type="number" id="maxFullPageHeight" min="1000" max="30000" step="500" /></label>
+        </div>
+      </section>
+
+      <section class="card" data-advanced>
+        <h2>Privacy and redaction</h2>
+        <p class="muted">Matching data is replaced with <code>[REDACTED]</code> before it's stored, so it never reaches a report.</p>
+        <div class="row wrap">
+          <label class="check"><input type="checkbox" data-redact="headers" /> Auth and cookie headers</label>
+          <label class="check"><input type="checkbox" data-redact="jsonKeys" /> Sensitive fields (password, token, card…)</label>
+          <label class="check"><input type="checkbox" data-redact="query" /> Sensitive URL parameters</label>
+          <label class="check"><input type="checkbox" data-redact="emails" /> Email addresses</label>
+          <label class="check"><input type="checkbox" data-redact="tokens" /> Access tokens (JWT, Bearer)</label>
+          <label class="check"><input type="checkbox" data-redact="cards" /> Card numbers</label>
+          <label class="check"><input type="checkbox" data-redact="phones" /> Phone numbers</label>
+        </div>
+        <div class="cols">
+          <label class="field">
+            Extra header names
+            <span class="hint">One per line, for example <code>x-tenant-key</code>.</span>
+            <textarea id="extraHeaders" rows="3" spellcheck="false"></textarea>
+          </label>
+          <label class="field">
+            Extra field names
+            <span class="hint">JSON, form or URL fields to hide, one per line, for example <code>dateOfBirth</code>.</span>
+            <textarea id="extraKeys" rows="3" spellcheck="false"></textarea>
+          </label>
+          <label class="field">
+            Custom patterns
+            <span class="hint">One per line as <code>LABEL: regex</code>, for example <code>ORDER: ORD-\d{6}</code>.</span>
+            <textarea id="customRules" rows="3" spellcheck="false"></textarea>
+            <span class="error-text" id="customRulesError"></span>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" id="includeStorageValues" /> Include local/session storage values in reports (keys only by default)</label>
+      </section>
+
+      <div class="footer-actions">
+        <button type="button" class="btn danger" id="resetBtn">Reset all settings</button>
+      </div>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
